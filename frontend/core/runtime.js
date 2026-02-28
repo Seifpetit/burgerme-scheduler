@@ -28,7 +28,7 @@ export const R = {
       ctrl: false,
       alt: false
      },
-     
+
     touch: {},
   },
 
@@ -39,6 +39,10 @@ export const R = {
 
   ui: {
     activeEmployeeCard: null,
+  },
+
+  assets: {
+    fonts: {},
   }
 
 };

@@ -1,4 +1,5 @@
 import { SlotRow } from "./SlotRow.js";
+import { R } from "../core/runtime.js";
 
 export class ShiftSection {
   constructor(dayIndex, type) {
@@ -94,6 +95,8 @@ export class ShiftSection {
     // shift label
     g.fill("#ffffff");
     g.textAlign(g.LEFT, g.CENTER);
+    const font = R.assets.fonts["Medium"];
+    g.textFont(font);
     g.text(
       this.getLabel(),
       this.x + 8,

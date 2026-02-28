@@ -8,6 +8,17 @@ new window.p5(p5 => {
   let appState = null;
   let gMain, gOverlay;
 
+  p5.preload = () => {
+    // Preload assets if needed (e.g., fonts, icons)
+    R.assets.fonts["Thin"] = p5.loadFont('./assets/font/MADE TOMMY Thin_PERSONAL USE.otf');
+    R.assets.fonts["Light"] = p5.loadFont('./assets/font/MADE TOMMY Light_PERSONAL USE.otf');
+    R.assets.fonts["Regular"] = p5.loadFont('./assets/font/MADE TOMMY Regular_PERSONAL USE.otf');
+    R.assets.fonts["Medium"] = p5.loadFont('./assets/font/MADE TOMMY Medium_PERSONAL USE.otf');
+    R.assets.fonts["Bold"] = p5.loadFont('./assets/font/MADE TOMMY Bold_PERSONAL USE.otf');
+    R.assets.fonts["ExtraBold"] = p5.loadFont('./assets/font/MADE TOMMY ExtraBold_PERSONAL USE.otf');
+
+  }
+
   // ─────────────────────────────────────────
   // SETUP (must stay synchronous)
   // ─────────────────────────────────────────
@@ -22,12 +33,8 @@ new window.p5(p5 => {
     gMain    = p5.createGraphics(p5.width, p5.height);
     gOverlay = p5.createGraphics(p5.width, p5.height);
 
-
     // Start async boot
     initState();
-
-    
-
     
   };
 

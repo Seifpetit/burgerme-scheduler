@@ -1,3 +1,4 @@
+import { R } from "../core/runtime.js";
 import { MENU_SCHEMAS } from "./menuSchema.js";
 // ───────────────────────────────────────────────────────────────────────────
 // CONTEXT MENU CONTROLLER
@@ -146,8 +147,10 @@ export class ContextMenuController {
       g.stroke("#000000ff"); g.strokeWeight(1); g.fill("#555555ff");
       g.rect(this.x + pad, this.y + index * 28 + pad, this.w - 2 * pad, this.itemH - 2 * pad, 4);
 
+      const font = R.assets.fonts["Medium"];
+      g.textFont(font);
       g.textAlign(g.LEFT, g.CENTER);  g.textSize(14);  g.fill("#fff");  g.noStroke();
-      g.text(action.label, this.x + 10, this.y + this.itemH / 2 + index * 28);
+      g.text(action.label, this.x + 10, this.y + this.itemH / 2 + index * this.itemH - 2);
     g.pop();
   }
 
@@ -181,63 +184,6 @@ export class ContextMenuController {
 
     g.pop();
 
-  }
-
-
-}
-
-class ContextTask {
-  constructor( {type, label, onTask} ) {
-    this.onTask = onTask;
-    this.type = type;
-    this.label = label;
-    this.hover = false;
-    this.x = 0; this.y = 0; this.w = 0; this.h = 0;
-  }
-
-  setGeometry(x, y, w, h) {
-    this.x = x; this.y = y; this.w = w; this.h = h;
-  }
-
-  update(){
-    
-  }
-
-  hit(mx, my){
-    return (mx > this.x && mx < this.x + this.w &&
-            my > this.y && my < this.y + this.h);
-  }
-
-  onHover(mx, my){
-    this.hover = false;
-    if(!this.hit(mx, my)) return false;
-    this.hover = true;
-  }
-
-  onClick(mx, my){console.log('context click', this.type);
-    if(!this.hit(mx, my)) {
-      console.log("TYPE: ", this.type , " => ",!this.hit(mx, my));
-      return false;}
-    
-    this.onTask(this.type);
-    // further action handling can be implemented here
-    return true;
-  }
-
-
-  draw(g){
-
-    g.push();
-
-    g.fill(this.hover?"#333333ff":"#555555ff"); g.strokeWeight(1); g.stroke("#000000ff");
-    g.rect(this.x, this.y, this.w, this.h, 2);
-
-    g.fill(255);
-    g.textAlign(g.LEFT, g.CENTER); g.textSize(12);
-    g.text(this.label, this.x + 5, this.y + this.h / 2);
-
-    g.pop();
-    
   }
 
 

@@ -69,11 +69,14 @@ export class SlotRow {
 
       if (emp) {
         g.fill("#ffffff");
+        const font = R.assets.fonts["Bold"];
+        g.textSize(18);
+        g.textFont(font);
         g.textAlign(g.CENTER, g.CENTER);
         g.text(
           emp.name,
           this.x + this.w/2,
-          this.y + this.h/2
+          this.y + this.h/2 - 4
         );
       }
 

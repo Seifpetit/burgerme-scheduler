@@ -42,7 +42,7 @@ export class Schedule {
     const padding = 20;
 
     // Layout proportions
-    const trayWidth = w * 0.22;      // 22% left panel
+    const trayWidth = w * 0.16;      // 16-22% left panel
     const gridWidth = w - trayWidth - padding * 2;
 
     const trayX = x + padding;

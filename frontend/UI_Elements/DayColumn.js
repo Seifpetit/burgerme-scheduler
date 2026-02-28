@@ -1,4 +1,5 @@
 import { ShiftSection } from "./ShiftSection.js";
+import { R } from "../core/runtime.js";
 
 export class DayColumn {
   constructor(dayIndex) {
@@ -65,17 +66,17 @@ export class DayColumn {
   render(g) {
 
     g.push();
-
     // column background (optional subtle)
-    g.fill("#2b2b2b"); g.stroke("#fba700ff"); g.strokeWeight(1);
+    g.fill("#333"); g.stroke("#fba700ff"); g.strokeWeight(2);
     g.rect(this.x, this.y, this.w, this.h, 8);
-    g.noStrpoke();
+    g.noStroke();
     // header
-    g.fill("#ffffff");
-    g.textAlign(g.CENTER, g.CENTER);
-
-    const label = this.getDayLabel();
-    g.text(label, this.x + this.w / 2, this.y + 20);
+    g.fill("#92ba00");
+    g.textAlign(g.CENTER, g.CENTER); g.stroke("#000000"); g.strokeWeight(1);
+    const font = R.assets.fonts["ExtraBold"];
+    g.textFont(font);
+    const label = this.getDayLabel(); g.textSize(20);
+    g.text(label, this.x + this.w / 2, this.y + 16);
 
     g.pop();
 

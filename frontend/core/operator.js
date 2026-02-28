@@ -25,9 +25,9 @@ export function initGeometry(p5) {
 
   R.geometry.window = {w: window.innerWidth, h: window.innerHeight};
   R.geometry.schedule = {x: 50, y: 50, w: WINDOW_W - 100, h: WINDOW_H - 100}; 
-  
+
   UI_ELEMENTS.schedule?.setGeometry(50, 50, WINDOW_W - 100, WINDOW_H - 100);
-  UI_ELEMENTS.button?.setGeometry(WINDOW_W - 140, 0, 100, 40);
+  UI_ELEMENTS.button?.setGeometry(WINDOW_W / 2 - 70, 10, 140, 25);
 
 
 }

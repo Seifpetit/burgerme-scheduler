@@ -1,3 +1,5 @@
+import { R } from "../core/runtime.js";
+
 export class EmployeeCard {
   constructor(employee, requestContextMenu) {
 
@@ -26,6 +28,11 @@ export class EmployeeCard {
     // original tray position (for reset)
     this.localX = 0;
     this.localY = 0;
+
+    // tiltle effect while dragging
+    this.rotation = 0;
+    this.targetRotation = 0;
+    this.prevX = 0;
   }
 
   // ─────────────────────────────
@@ -104,15 +111,23 @@ export class EmployeeCard {
   dragTo(mouse) {
     if (!this.dragging) return;
 
-    this.x = mouse.x - this.offsetX;
+    const newX = mouse.x - this.offsetX;
+
+    // compute velocity
+    const velocityX = newX - this.x;
+
+    this.prevX = this.x;
+    this.x = newX;
     this.y = mouse.y - this.offsetY;
+
+    // map velocity to rotation
+    const maxTilt = 0.1; // radians
+    this.targetRotation = Math.max(-maxTilt, Math.min(maxTilt, velocityX * 0.02));
   }
 
   stopDrag() {
     this.dragging = false;
-    // force reset to layout position next frame
-    //this.x = this.localX;
-    //this.y = this.localY;
+    this.targetRotation = 0;
   }
 
   // ─────────────────────────────
@@ -120,7 +135,8 @@ export class EmployeeCard {
   // ─────────────────────────────
 
   update(mouse) {
-    // future: add animation, hover effects, etc.
+    const speed = 0.15;
+    this.rotation += (this.targetRotation - this.rotation) * speed;
   }
 
   // ─────────────────────────────
@@ -131,26 +147,30 @@ export class EmployeeCard {
 
     g.push();
 
-    // subtle lift effect while dragging
-    if (this.dragging) {
-      g.shadowColor = "rgba(0,0,0,0.4)";
-      g.shadowBlur = 15;
-    }
-    //                        "#afe000" : "#92ba00"
-    g.fill(this.highlighted ? "#afe000" : "#92ba00");
-    g.rect(this.x, this.y, this.w, this.h, 10);
+    g.translate(this.x + this.w / 2, this.y + this.h / 2);
+    g.rotate(this.rotation);
 
-    g.fill("#000000"); g.textSize(20);
-    g.textAlign(g.LEFT, g.CENTER);
+    g.fill(this.highlighted ? "#afe000" : "#92ba00");
+    g.rect(-this.w / 2, -this.h / 2, this.w, this.h, 10);
+
+    g.fill("#ffffff"); g.textSize(18); 
+    g.textAlign(g.LEFT, g.CENTER); g.stroke("#000000"); g.strokeWeight(2);
+    const font = R.assets.fonts["Bold"];
+    g.textFont(font);
     g.text(
       this.employee.name,
-      this.x + 12,
-      this.y + this.h / 2
+      -this.w / 2 + 10,
+      -this.h / 2 + this.h / 2 - 4
     );
+    g.noStroke();
 
+    g.pop();
 
+    if(this.dragging) return;
     // context menu button (simple square on right side)
+    g.push();
     g.fill("#333333");  g.stroke("#fba700ff"); g.strokeWeight(1.4);
+    g.rotate(this.rotation);
     g.rect(this.contextBox.x, this.contextBox.y, this.contextBox.w, this.contextBox.h, 10);
 
     g.pop();
