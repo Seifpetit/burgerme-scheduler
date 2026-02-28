@@ -2,7 +2,7 @@ import { R } from "../core/runtime.js";
 
 import { EmployeeTray } from "./EmployeeTray.js";
 import { WeekGrid } from "./WeekGrid.js";
-import { GenerateButton} from "./Button.js";
+import { ContextMenuController } from "./ContextMenuController.js";
 
 
 export class Schedule {
@@ -14,8 +14,13 @@ export class Schedule {
     this.h = 0;
 
     // children
-    this.tray = new EmployeeTray(state.employees);
+    this.contextMenu = new ContextMenuController(commands);
+    this.requestContextMenu = (payload) => {
+      this.contextMenu.open(payload); 
+    }
+    this.tray = new EmployeeTray(state.employees, this.requestContextMenu);
     this.grid = new WeekGrid(state.demand);
+    
 
 
     // app references
@@ -67,15 +72,7 @@ export class Schedule {
       );
     }
 
-    if (this.generateBtn) {
-      const btnW = 140;
-      const btnH = 40;
-
-      this.generateBtn.setGeometry(
-        gridX + gridWidth - btnW - padding,
-        y + padding
-      );
-    }
+  
   }
 
   onHit(x, y) {
@@ -100,10 +97,31 @@ export class Schedule {
 
   onMousePress(mouse) {
 
-    // 1. Tray sticker
-    const sticker = this.tray.hitTest(mouse.x, mouse.y);
+    // 1. Context Menu
+    if (this.contextMenu.visible) {
+      if (this.contextMenu.hitTest(mouse.x, mouse.y)) {
+        this.contextMenu.onClick(mouse.x, mouse.y);
+        return;
+      }
+      this.contextMenu.close();
+    }
 
+    // 2. Tray sticker
+    const sticker = this.tray.hitTest(mouse.x, mouse.y);
     if (sticker) {
+
+      const localX = mouse.x - this.tray.x;
+      const localY = mouse.y - this.tray.y + this.tray.scrollY;
+
+      if (sticker.contextBoxHitTest(localX, localY)) {  
+        this.requestContextMenu({
+          x: sticker.contextBox.x + this.tray.x,
+          y: sticker.contextBox.y + this.tray.y - this.tray.scrollY,
+          type: "EMPLOYEE",
+          ref: sticker,
+        });
+      }
+
       this.activeSticker = sticker;
 
       // Compute current rendered position
@@ -117,7 +135,34 @@ export class Schedule {
       // Now start drag
       sticker.startDrag(mouse);
       return;
+
     }
+
+    // 3. Week grid
+    if (this.grid) {
+
+      this.grid.days.forEach(day => {
+        day.shifts.forEach(shift => {
+          if (shift.contextBoxHitTest(mouse.x, mouse.y)) {
+
+            this.requestContextMenu({
+              x: shift.contextBox.x,
+              y: shift.contextBox.y,
+              type: "SHIFT",
+              ref: shift,
+            });
+
+          }
+        });
+      });
+    
+    }
+
+
+
+
+
+
   }
 
   onMouseRelease(mouse) {
@@ -138,9 +183,7 @@ export class Schedule {
   }
 
   update(p5, mouse) {
-    if (this.activeSticker) {
-      console.log("ACTIVE AT START:", this.activeSticker.employee.name);
-    }
+
     // Safety: This ensures stale drag doesn’t survive
     if (!this.activeSticker) {
       for (const s of this.tray.stickers) {
@@ -179,25 +222,27 @@ export class Schedule {
     mouse.wheel = 0; // reset after use
   }
 
-  render(g) {
-    if (!g) return;
+  render(gMain, gOverlay) {
+    if (!gMain || !gOverlay) return;
 
-    g.push();
+    gMain.push();
 
-    g.fill("#5c2890234");
-    g.rect(this.x, this.y, this.w, this.h, 16);
+    gMain.fill("#5c2890234");
+    gMain.rect(this.x, this.y, this.w, this.h, 16);
 
-    g.pop(); 
+    gMain.pop(); 
     //console.clear();
     //console.log("about to render tray");
-    if (this.tray) this.tray.render(g, this.activeSticker);
+    if (this.tray) this.tray.render(gMain, this.activeSticker);
 
     //console.log("about to render grid");
-    if (this.grid) this.grid.render(g);
+    if (this.grid) this.grid.render(gMain);
 
     //console.log("about to render active sticker");
-    if (this.activeSticker) this.activeSticker.render(g);
+    if (this.activeSticker) this.activeSticker.render(gOverlay);
     //if (this.tray.) this.tray.render(g); TODO: ADD Slots render
+
+    if (this.contextMenu) this.contextMenu.render(gOverlay);
     
   }
 

@@ -83,11 +83,10 @@ function routeClick(m) {
 
 function routeDoubleClick(m) {
 
-  //CLEAR LOGS EACH CLICK
+ 
   if(!UI_ELEMENTS.schedule.onHit(m.x, m.y)) {
     return false;
   }
-  console.log("Routing Double-click at:", m.x, m.y);
-  //TEMP LOGS
+
 
 }

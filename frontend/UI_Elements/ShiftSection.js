@@ -11,6 +11,12 @@ export class ShiftSection {
     this.y = 0;
     this.w = 0;
     this.h = 0;
+    this.contextBox = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    };
 
     // children
     this.slots = [];
@@ -33,8 +39,8 @@ export class ShiftSection {
 
   getLabel() {
     return this.type === "lunch"
-      ? "Lunch (12–16)"
-      : "Dinner (18–22)";
+      ? "Lunch "
+      : "Dinner ";
   }
 
   setGeometry(x, y, w, h) {
@@ -48,6 +54,13 @@ export class ShiftSection {
     const slotAreaH = h - labelH;
     const slotH = slotAreaH / this.slots.length;
 
+    this.contextBox = {
+      x: this.x + this.w - 20,
+      y: this.y + 4,
+      w: 16,
+      h: 15
+    };
+
     for (let i = 0; i < this.slots.length; i++) {
       this.slots[i].setGeometry(
         x + 8,
@@ -57,6 +70,12 @@ export class ShiftSection {
       );
     }
   }
+
+  contextBoxHitTest(mx, my) {
+    return (mx > this.contextBox.x && mx < this.contextBox.x + this.contextBox.w &&
+            my > this.contextBox.y && my < this.contextBox.y + this.contextBox.h);
+  }
+
 
   update(mouse) {
     for (const slot of this.slots) {
@@ -69,9 +88,9 @@ export class ShiftSection {
     g.push();
 
     // shift container background
-    g.fill("#1f1f1f");
+    g.fill("#1f1f1f");  g.stroke("#92ba00"); g.strokeWeight(1);
     g.rect(this.x, this.y, this.w, this.h, 8);
-
+    g.noStroke();
     // shift label
     g.fill("#ffffff");
     g.textAlign(g.LEFT, g.CENTER);
@@ -80,6 +99,11 @@ export class ShiftSection {
       this.x + 8,
       this.y + 12
     );
+
+    // context menu button (simple square on right side) 
+    g.fill("#333333");  g.stroke("#fba700ff"); g.strokeWeight(1.4);
+    g.rect(this.contextBox.x, this.contextBox.y, this.contextBox.w, this.contextBox.h, 4);
+    
 
     g.pop();
 

@@ -54,7 +54,7 @@ export function renderFrame(p5, {gMain, gOverlay}) {
   
   gOverlay.clear();
   
-  UI_ELEMENTS.schedule?.render(gMain);
+  UI_ELEMENTS.schedule?.render(gMain, gOverlay);
   UI_ELEMENTS.button?.render(gOverlay);
 
   

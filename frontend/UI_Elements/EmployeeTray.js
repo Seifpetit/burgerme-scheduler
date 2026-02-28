@@ -1,10 +1,10 @@
 import { EmployeeCard } from "./EmployeeCrad.js";
 
 export class EmployeeTray {
-  constructor(employees) {
+  constructor(employees, requestContextMenu) {
 
     this.employees = employees || [];
-
+    this.requestContextMenu = requestContextMenu;
     // geometry
     this.x = 0;
     this.y = 0;
@@ -31,7 +31,7 @@ export class EmployeeTray {
     this.stickers = [];
 
     for (const emp of this.employees) {
-      this.stickers.push(new EmployeeCard(emp));
+      this.stickers.push(new EmployeeCard(emp, this.requestContextMenu));
     }
   }
 
