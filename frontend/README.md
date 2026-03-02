@@ -6,7 +6,7 @@ This tool replaces messy WhatsApp scheduling with a visual, fast, and editor-sty
 
 ## 🎥 Demo
 
-![Demo](./docs/demo.gif)
+![Demo](./docs/demo2.gif)
 
 
 # 🧠 The Problem
