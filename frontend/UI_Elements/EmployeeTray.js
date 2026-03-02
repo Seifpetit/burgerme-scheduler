@@ -1,4 +1,5 @@
 import { EmployeeCard } from "./EmployeeCrad.js";
+import { R } from "../core/runtime.js";
 
 export class EmployeeTray {
   constructor(employees, requestContextMenu) {
@@ -163,6 +164,7 @@ export class EmployeeTray {
   update(mouse) {
 
     // smooth interpolation
+    
     this.clampScroll();
     this.scrollY += (this.targetScrollY - this.scrollY) * 0.12;
 

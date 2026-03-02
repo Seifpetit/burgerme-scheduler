@@ -1,5 +1,6 @@
 import { R } from "../core/runtime.js";
 import { MENU_SCHEMAS } from "./menuSchema.js";
+import { commands } from "../core/commands.js";
 // ───────────────────────────────────────────────────────────────────────────
 // CONTEXT MENU CONTROLLER
 // ───────────────────────────────────────────────────────────────────────────  
@@ -20,6 +21,8 @@ export class ContextMenuController {
     this.mode = "menu"; // "menu" | "input";
     this.inputValue = "";
     this.pendingAction = null;
+
+    this.highlighted = false;
 
   }   
 
@@ -62,8 +65,12 @@ export class ContextMenuController {
       this.inputValue = "";
       return;
     }
-    // TODO: Implement non-input actions
-    // this.emitCommand(action, null); 
+
+    this.emitCommand(action, null); 
+  }
+
+  emitCommand(actionType, payload) {
+    console.log("Emitting command:", actionType, "with payload:", payload);
   }
 
   submitInput() {
@@ -121,6 +128,29 @@ export class ContextMenuController {
   
   }
 
+  onHover(mx, my) {
+    if(this.mode === "menu") {
+      this.actions.forEach((action, index) => {
+        this.hitTestAction(mx, my, action, index);
+      });
+    }
+  }
+
+  hitTestAction(mx, my, action, index) {
+
+      const itemX = this.x;
+      const itemY = this.y + index * this.itemH;
+      const itemW = this.w;
+      const itemH = this.itemH;
+
+      if (mx > itemX && mx < itemX + itemW &&
+          my > itemY && my < itemY + itemH) {
+        this.highlighted = index; 
+        return;
+      }
+    
+  }
+
   onClick(mx, my) {
     if(!this.visible) return;
 
@@ -144,7 +174,8 @@ export class ContextMenuController {
   renderAction(g, action, index) {
     g.push();
     const pad = 2;
-      g.stroke("#000000ff"); g.strokeWeight(1); g.fill("#555555ff");
+      g.stroke("#000000ff"); g.strokeWeight(1); // #fba700ff #555555ff
+      g.fill(this.highlighted === index ? "#fba700" : "rgba(85, 85, 85, 0.5)");
       g.rect(this.x + pad, this.y + index * 28 + pad, this.w - 2 * pad, this.itemH - 2 * pad, 4);
 
       const font = R.assets.fonts["Medium"];
@@ -161,7 +192,7 @@ export class ContextMenuController {
     g.push();
     this.h = this.actions.length * this.itemH; 
     // main button
-    g.fill("#fba700ff"); 
+    g.fill("#92ba00e0"); 
     g.rect(this.x, this.y, this.w, this.h, 4);
 
     if(this.mode === "menu") {
@@ -183,8 +214,9 @@ export class ContextMenuController {
     }
 
     g.pop();
-
+    this.highlighted = null;
   }
 
+  
 
 }

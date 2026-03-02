@@ -18,8 +18,7 @@ export function initUI() {
 }
 
 export function initGeometry(p5) {
-  R.enginePhase = "ready";
-
+  
   const WINDOW_W = window.innerWidth;
   const WINDOW_H = window.innerHeight;
 
@@ -29,7 +28,7 @@ export function initGeometry(p5) {
   UI_ELEMENTS.schedule?.setGeometry(50, 50, WINDOW_W - 100, WINDOW_H - 100);
   UI_ELEMENTS.button?.setGeometry(WINDOW_W / 2 - 70, 10, 140, 25);
 
-
+  R.enginePhase = "ready";
 }
 
 

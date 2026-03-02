@@ -15,6 +15,12 @@ export class SlotRow {
     this.y = 0;
     this.w = 0;
     this.h = 0;
+    this.contextBox = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    };
 
     // interaction state
     this.highlight = false;
@@ -28,6 +34,13 @@ export class SlotRow {
     this.y = y;
     this.w = w;
     this.h = h;
+    
+    this.contextBox = {
+      x: x + w - w * 0.20,
+      y: y + h - h * 0.15,
+      w: w * 0.16,
+      h: h * 0.1,
+    };
   }
 
   hitTest(x, y) {
@@ -39,6 +52,10 @@ export class SlotRow {
     );
   }
 
+  checkAssignemnt() {
+    return R.appState.draft?.assignments?.[this.slotId];
+  }
+
   getCenter() {
     return {
       x: this.x + this.w / 2,
@@ -46,8 +63,26 @@ export class SlotRow {
     };
   }
 
+  contextBoxHitTest(mx, my) {
+    return (mx > this.contextBox.x && mx < this.contextBox.x + this.contextBox.w &&
+            my > this.contextBox.y && my < this.contextBox.y + this.contextBox.h);
+  }
+
   update(mouse) {
 
+  }
+
+  renderContextBox(g) {
+    g.fill("#92ba00");  g.stroke("#92ba00"); g.strokeWeight(1.4);
+    
+    g.rect(this.contextBox.x, this.contextBox.y, this.contextBox.w, this.contextBox.h, 4);
+    const pad = this.contextBox.w / 3;
+    for (let i = 0; i < 3; i++) {
+      g.fill("#000000");
+      g.circle(
+        this.contextBox.x + pad * (i + 0.5), 
+        this.contextBox.y + this.contextBox.h / 2, 4);
+    }
   }
 
   render(g) {
@@ -80,8 +115,10 @@ export class SlotRow {
         );
       }
 
-    }
-    
+    } 
+
+    // context menu button (simple square on right side) 
+    this.renderContextBox(g);
 
     g.pop();
 

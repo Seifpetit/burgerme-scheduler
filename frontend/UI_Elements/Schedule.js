@@ -82,7 +82,15 @@ export class Schedule {
 
   onMouseHover(mouse) {
 
-    // 1. Tray sticker
+    // 1. Context Menu
+    if (this.contextMenu.visible) {
+      if (this.contextMenu.hitTest(mouse.x, mouse.y)) {
+        this.contextMenu.onHover(mouse.x, mouse.y);
+        return;
+      }
+    }
+
+    // 2. Tray sticker
     if (!this.tray) return;
     const sticker = this.tray.hitTest(mouse.x, mouse.y);
 
@@ -139,29 +147,35 @@ export class Schedule {
     }
 
     // 3. Week grid
-    if (this.grid) {
-
+    if (!this.grid) return;
       this.grid.days.forEach(day => {
         day.shifts.forEach(shift => {
           if (shift.contextBoxHitTest(mouse.x, mouse.y)) {
-
             this.requestContextMenu({
               x: shift.contextBox.x,
               y: shift.contextBox.y,
               type: "SHIFT",
               ref: shift,
             });
-
           }
-        });
-      });
-    
-    }
+          shift.slots.forEach(slot => {
+            if (slot.contextBoxHitTest(mouse.x, mouse.y)) {
 
+              const requestType = slot.checkAssignemnt() ? "ASSIGNMENT" : "SLOT";
+              console.log("Requesting context menu with type:", requestType, "for slot:", slot.slotId);
+              this.requestContextMenu({
+                x: slot.contextBox.x,
+                y: slot.contextBox.y,
+                type: requestType,
+                ref: slot,
+              });
 
+            }
+          });
 
+        }
 
-
+      );});
 
   }
 
