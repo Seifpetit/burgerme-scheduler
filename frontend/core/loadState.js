@@ -1,6 +1,6 @@
 export async function loadState() {
   try {
-    const response = await fetch("https://burgerme-scheduler.onrender.com/state");
+    const response = await fetch("/state");
 
     if(!response.ok) throw new Error(`Server error: ${response.status}`);
 

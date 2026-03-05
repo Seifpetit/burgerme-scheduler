@@ -4,7 +4,11 @@ Drag-and-drop weekly scheduling board built for real restaurant managers.
 
 This tool replaces messy WhatsApp scheduling with a visual, fast, and editor-style workflow.
 
-## 🎥 Demo
+## 🎥  Live Demo
+[https://burgerme-scheduler.onrender.com]
+*Note: The live demo may take up to ~60 seconds to wake up (free-tier cold start)
+
+## 🎥  Gif Demo
 
 ![Demo](./docs/demo2.gif)
 
