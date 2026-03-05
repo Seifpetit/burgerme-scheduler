@@ -1,4 +1,4 @@
-import { EmployeeCard } from "./EmployeeCrad.js";
+import { EmployeeCard } from "./EmployeeCard.js";
 import { R } from "../core/runtime.js";
 
 export class EmployeeTray {

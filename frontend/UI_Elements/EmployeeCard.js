@@ -29,6 +29,8 @@ export class EmployeeCard {
     this.localX = 0;
     this.localY = 0;
 
+    
+
     // tiltle effect while dragging
     this.rotation = 0;
     this.targetRotation = 0;
@@ -56,7 +58,8 @@ export class EmployeeCard {
       x: this.x + this.w - 20,
       y: this.y + (this.h - this.h * 0.8) / 2,
       w: 15,
-      h: this.h * 0.8
+      h: this.h * 0.8,
+      isHovered: false,
     };
   }
 
@@ -91,6 +94,13 @@ export class EmployeeCard {
     this.highlighted = false;
   }
 
+  onHover(mx, my) {console.log(this.contextBoxHitTest(mx, my));
+    if(!this.contextBoxHitTest(mx, my)) return;
+    console.log(this.contextBox.isHovered);
+    this.contextBox.isHovered = true;
+    console.log(this.contextBox.isHovered);
+  }
+
   // ─────────────────────────────
   // DRAG
   // ─────────────────────────────
@@ -106,6 +116,7 @@ export class EmployeeCard {
 
     this.offsetX = mouse.x - this.x;
     this.offsetY = mouse.y - this.y;
+
   }
 
   dragTo(mouse) {
@@ -128,6 +139,7 @@ export class EmployeeCard {
   stopDrag() {
     this.dragging = false;
     this.targetRotation = 0;
+    
   }
 
   // ─────────────────────────────
@@ -137,6 +149,17 @@ export class EmployeeCard {
   update(mouse) {
     const speed = 0.15;
     this.rotation += (this.targetRotation - this.rotation) * speed;
+
+    if (this.snapActive) {
+      this.x += (this.targetX - this.x) * 0.15;
+      this.y += (this.targetY - this.y) * 0.15;
+      if (Math.abs(this.x - this.targetX) < 0.5 && Math.abs(this.y - this.targetY) < 0.5) {
+      
+        this.snapActive = false;
+      } 
+    }
+  
+
   }
 
   // ─────────────────────────────
@@ -146,11 +169,11 @@ export class EmployeeCard {
   render(g) {
 
     g.push();
-
     g.translate(this.x + this.w / 2, this.y + this.h / 2);
     g.rotate(this.rotation);
 
     g.fill(this.highlighted ? "#afe000" : "#92ba00");
+    if(this.dragging) g.fill("#afe000a0")
     g.rect(-this.w / 2, -this.h / 2, this.w, this.h, 10);
 
     g.fill("#ffffff"); g.textSize(18); 
@@ -168,11 +191,13 @@ export class EmployeeCard {
 
     if(this.dragging) return;
     // context menu button (simple square on right side)
-    g.push();
-    g.fill("#333333");  g.stroke("#fba700ff"); g.strokeWeight(1.4);
+    g.push(); //console.log(this.contextBox.isHovered);
+    g.fill(this.contextBox.isHovered ? "#6c6c6c" : "#333333");  g.stroke("#fba700ff"); g.strokeWeight(1.4);
     g.rotate(this.rotation);
     g.rect(this.contextBox.x, this.contextBox.y, this.contextBox.w, this.contextBox.h, 10);
 
     g.pop();
+
+    //this.contextBox.isHovered = false;
   }
 }

@@ -23,7 +23,7 @@ export class ShiftSection {
     this.slots = [];
 
     // V0: fixed capacity
-    this.capacity = 3;
+    this.capacity = 6;
 
     this.buildSlots();
   }

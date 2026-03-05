@@ -24,6 +24,14 @@ export class ContextMenuController {
 
     this.highlighted = false;
 
+    this.inputBox = {
+      x: 0,
+      y: 0,
+      w: this.w * 0.97,
+      h: this.itemH * 0.8,
+      isHovered: false,
+    }
+
   }   
 
   open(payload) {
@@ -35,6 +43,9 @@ export class ContextMenuController {
     
     this.x = x;
     this.y = y;
+    this.inputBox.x = this.x + (this.w - this.inputBox.w)/2;
+    this.inputBox.y = this.y + (this.itemH - this.inputBox.h)/2;
+
     this.visible = true;
     this.target = {type, ref};
     this.actions = this.initActions(type, ref);
@@ -59,10 +70,11 @@ export class ContextMenuController {
   }
 
   selectAction(action) {
-    if(action.requiresInput) {
+    if(action.input) {
       this.mode = "input";
-      this.pendingAction = action.type;
+      this.pendingAction = action;
       this.inputValue = "";
+      console.log("requires input");
       return;
     }
 
@@ -70,22 +82,35 @@ export class ContextMenuController {
   }
 
   emitCommand(actionType, payload) {
-    console.log("Emitting command:", actionType, "with payload:", payload);
+
+    const element = this.target.ref; 
+
+    if(element.employee) {
+        console.log("Emitting command:", actionType," from target: ", 
+        element.employee.name, " with payload:", payload);
+    
+      if(actionType.id === "renameEmployee") 
+        this.operator.rename(element.employee.id, payload);
+    }
+    
+    
   }
 
   submitInput() {
     if(!this.pendingAction) return;
-    const value = Number(this.inputValue);
+    console.log(this.inputValue);
+    if(Number(this.inputValue)) {const value = Number(this.inputValue);}
 
-    if(isNaN(value)) return;
+    this.emitCommand( this.pendingAction, this.inputValue);
 
-    this.emitCommand( this.pendingAction, {value});
-
-    this.operator.handleCommand({
-      type: action.type,
-      target: this.target,
-      payload
-    });
+    // TODO ------
+    //
+    //this.operator.handleCommand({
+    //  type: action.type,
+    //  target: this.target,
+    //  payload
+    //});
+    // ------------
 
     this.close();
 
@@ -134,6 +159,11 @@ export class ContextMenuController {
         this.hitTestAction(mx, my, action, index);
       });
     }
+    if(this.mode === "input") {
+      if(this.hitTestInputBox(mx, my)) {
+        this.inputBox.isHovered = true;
+      }
+    }
   }
 
   hitTestAction(mx, my, action, index) {
@@ -149,6 +179,13 @@ export class ContextMenuController {
         return;
       }
     
+  }
+
+  hitTestInputBox(mx, my) {
+    if (mx > this.inputBox.x && mx < this.inputBox.x + this.inputBox.w &&
+        my > this.inputBox.y && my < this.inputBox.y + this.inputBox.h) {
+      return true;
+    } return false;
   }
 
   onClick(mx, my) {
@@ -167,8 +204,18 @@ export class ContextMenuController {
 
     if(this.mode === "input") {
       // click outside input box should close menu
+      if(this.hitTestInputBox(mx, my)) {
+        this.triggerInputIntent(); 
+        return;
+      }
+
       this.close();
+      
     }
+  }
+
+  triggerInputIntent(){
+    // TO DO
   }
 
   renderAction(g, action, index) {
@@ -191,29 +238,54 @@ export class ContextMenuController {
 
     g.push();
     this.h = this.actions.length * this.itemH; 
-    // main button
-    g.fill("#92ba00e0"); 
-    g.rect(this.x, this.y, this.w, this.h, 4);
+
+    
 
     if(this.mode === "menu") {
+      // Background rect
+      g.fill("#92ba00e0"); 
+      g.rect(this.x, this.y, this.w, this.h, 4);
       this.actions.forEach((action, index) => {
         this.renderAction(g, action, index);
       });
     }
     
     if(this.mode === "input") {
-      g.fill("#fff");
-      g.textAlign(g.LEFT, g.CENTER); g.textSize(14);
-      g.text("Enter value: ", this.x + 10, this.y + 10);
+      // Background rect
+      g.fill("#92ba00"); 
+      g.rect(this.x, this.y, this.w, this.itemH, 4);
 
+      // Input box rect
+      g.stroke(this.inputBox.isHovered ? "#0dc3aac9" : "#333");
       g.fill("#333");
-      g.rect(this.x + 10, this.y + 30, width - 20, itemH, 4);
+      g.rect(this.inputBox.x, this.inputBox.y, this.inputBox.w, this.inputBox.h, 4);
+      g.noStroke();
+      // Default text
+      if(!this.inputValue) {
+        g.fill(this.inputBox.isHovered ? "#ffffffc9" : "#ffffff87");
+        g.textAlign(g.LEFT, g.CENTER); g.textSize(14);
+        g.text("Enter value: ", this.x + 10, this.y + this.itemH / 2 - 2);
+      }
+      
+      // Captured Input 
+      const KB = R.input.keyboard;
+      if(KB.justPressed) {
+        if(KB.key === "Enter") { 
+          this.submitInput();
+        }
+        if(KB.key === "Backspace") {
+          this.inputValue = this.inputValue.slice(0, -1);
+        }
+        else {this.inputValue += KB.key;}
+      }
+
       g.fill("#fff");
       g.textAlign(g.LEFT, g.CENTER); g.textSize(14);
-      g.text(this.inputValue, this.x + 15, this.y + 30 + itemH / 2);
+      g.text(this.inputValue, this.x + 10, this.y + this.itemH / 2 - 2);
     }
 
     g.pop();
+    this.inputBox.isHovered = false;
     this.highlighted = null;
   }
 

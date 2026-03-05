@@ -55,7 +55,13 @@ export const MENU_SCHEMAS = {
       id: "activateSwapMode",
       label: "Swap with...",
       input: null
-    }
+    },
+     {
+      id: "setConstraint",
+      label: "set constraint",
+      input: true
+    },
+    
   ],
 
   [MENU_TYPES.EMPLOYEE]: [

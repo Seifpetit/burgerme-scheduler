@@ -67,7 +67,7 @@ export class DayColumn {
 
     g.push();
     // column background (optional subtle)
-    g.fill("#333"); g.stroke("#fba700ff"); g.strokeWeight(2);
+    g.fill("#333"); //g.stroke("#fba700ff"); g.strokeWeight(2);
     g.rect(this.x, this.y, this.w, this.h, 8);
     g.noStroke();
     // header

@@ -2,6 +2,16 @@ import { R } from "./runtime.js";
 
 export const commands = {
 
+
+  rename(employeeId, newName) {
+    const employees = R.appState.employees;
+   
+    for(const emp of employees){
+      if(emp.id === employeeId) emp.name = newName;
+    }
+
+  },
+
   assign(employeeId, slotId) {
 
     if (!R.appState.draft) {

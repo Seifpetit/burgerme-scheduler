@@ -75,6 +75,19 @@ export class Schedule {
   
   }
 
+  findSlotUnder(x, y) {
+    if (!this.grid) return null;
+    for (const shift of this.grid.shifts) {
+      for (const slot of shift.slots) {
+        if (slot.hitTest(x, y)) {
+          return slot;
+        }
+      }
+
+    }
+    return null;
+  }
+
   onHit(x, y) {
     return x > this.x && x < this.x + this.w &&
            y > this.y && y < this.y + this.h; 
@@ -96,11 +109,26 @@ export class Schedule {
 
     if (sticker) {
       sticker.highlight();
+      const localX = mouse.x - this.tray.x;
+      const localY = mouse.y - this.tray.y + this.tray.scrollY;
+      sticker.onHover(localX, localY);
       return;
     } for (const s of this.tray.stickers) {
       s.highlighted = false;
     }
 
+
+    // 3. Grid
+    if(!this.grid) return;
+    this.grid.days.forEach(day => {
+        day.shifts.forEach(shift => {
+          shift.slots.forEach(slot => {
+            if (slot.hitTest(mouse.x, mouse.y)) {
+              if(!slot.pulseTrgiggered){slot.triggerPulse();}
+              
+            }
+    });});
+    })
   }
 
   onMousePress(mouse) {
@@ -183,11 +211,20 @@ export class Schedule {
 
     if (!this.activeSticker) return;
 
-    if (this.hoverSlot && this.commands?.assign) {
+    const sticker = this.activeSticker;
+    const slot = this.hoverSlot;
+
+    if (slot && this.commands?.assign) {
+
+      // emit structural command
       this.commands.assign(
-        this.activeSticker.employee.id,
-        this.hoverSlot.slotId
+        sticker.employee.id,
+        slot.slotId
       );
+
+      // update local state immediately for snappy UI
+      slot.triggerPulse();
+
     }
 
     this.activeSticker.stopDrag();
@@ -245,16 +282,12 @@ export class Schedule {
     gMain.rect(this.x, this.y, this.w, this.h, 16);
 
     gMain.pop(); 
-    //console.clear();
-    //console.log("about to render tray");
-    if (this.tray) this.tray.render(gMain, this.activeSticker);
 
-    //console.log("about to render grid");
     if (this.grid) this.grid.render(gMain);
 
-    //console.log("about to render active sticker");
+    if (this.tray) this.tray.render(gMain, this.activeSticker);
+    
     if (this.activeSticker) this.activeSticker.render(gOverlay);
-    //if (this.tray.) this.tray.render(g); TODO: ADD Slots render
 
     if (this.contextMenu) this.contextMenu.render(gOverlay);
     

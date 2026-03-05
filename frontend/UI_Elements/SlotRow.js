@@ -24,6 +24,8 @@ export class SlotRow {
 
     // interaction state
     this.highlight = false;
+    this.pulse = 0;
+    this.pulseTriggered = false;
 
     // V0 assignment
     this.assignedEmployeeId = null;
@@ -36,10 +38,10 @@ export class SlotRow {
     this.h = h;
     
     this.contextBox = {
-      x: x + w - w * 0.20,
-      y: y + h - h * 0.15,
-      w: w * 0.16,
-      h: h * 0.1,
+      x: x + w - w * 0.16,
+      y: y + h * 0.1,
+      w: w * 0.12,
+      h: h * 0.8,
     };
   }
 
@@ -68,36 +70,64 @@ export class SlotRow {
             my > this.contextBox.y && my < this.contextBox.y + this.contextBox.h);
   }
 
-  update(mouse) {
-
+  triggerPulse() {
+    this.pulseTriggered = true;
+    this.pulse = 1.0; // start pulse effect
   }
 
+  update(mouse) {
+    if(this.pulse > 0) {
+      this.pulse *= 0.2;
+      if(this.pulse < 0.01) {this.pulse = 0;
+        this.pulseTriggered = false;
+      }
+    }
+  } 
+
   renderContextBox(g) {
-    g.fill("#92ba00");  g.stroke("#92ba00"); g.strokeWeight(1.4);
+
+    g.fill(this.checkAssignemnt() ? "#333" : "#92ba00");  
+    g.stroke(this.checkAssignemnt() ? "#333" : "#92ba00"); 
+    g.strokeWeight(1.4);
     
     g.rect(this.contextBox.x, this.contextBox.y, this.contextBox.w, this.contextBox.h, 4);
-    const pad = this.contextBox.w / 3;
+    const pad = this.contextBox.h / 3;
     for (let i = 0; i < 3; i++) {
-      g.fill("#000000");
+      g.fill(this.checkAssignemnt() ? "#92ba00" : "#333");
       g.circle(
-        this.contextBox.x + pad * (i + 0.5), 
-        this.contextBox.y + this.contextBox.h / 2, 4);
+        this.contextBox.x + this.contextBox.w / 2, 
+        this.contextBox.y + pad * (i + 0.5), 4);
     }
   }
 
-  render(g) {
-    
+
+  drawPulseEffect(g) {
+    if(this.pulse <= 0) return;
+
+    const alpha = this.pulse * 180;
+    const expand = this.pulse * 6;
+
     g.push();
-    // background color
-    g.fill(this.highlight ? "#92ba0091":"#333333");
+    g.noFill();
+    g.stroke("#00ffffbe");
+    g.strokeWeight(2 + this.pulse * 2);
+    g.rect(
+      this.x - expand / 2,
+      this.y - expand / 2,
+      this.w + expand,
+      this.h + expand,
+      6
+    );
+    g.pop();
+  }
 
+  drawSlotBase(g) {
+    g.fill(this.highlight ? "#58e6fc3b":"#333333");
     g.rect(this.x, this.y, this.w, this.h, 6);
+  }
 
-    const assigned =
-      R.appState.draft?.assignments?.[this.slotId];
-      
-    if (assigned) {
-      g.fill(this.highlight ? "#6a32a67a" : "#4a4a4a");
+  drawAssignedEmployee(g, assigned) {
+    g.fill(this.highlight ? "#6a32a67a" : "#92ba00");
       g.rect(this.x, this.y, this.w, this.h, 6);
 
       const emp = R.appState.employees.find(e => e.id === assigned);
@@ -107,23 +137,32 @@ export class SlotRow {
         const font = R.assets.fonts["Bold"];
         g.textSize(18);
         g.textFont(font);
-        g.textAlign(g.CENTER, g.CENTER);
+        g.textAlign(g.LEFT, g.CENTER);
         g.text(
           emp.name,
-          this.x + this.w/2,
-          this.y + this.h/2 - 4
+          this.x + 4,
+          this.y + this.h / 2 - 2
         );
       }
+  }
 
-    } 
-
+  render(g) {
+    
+    g.push(); 
+    const assigned =
+      R.appState.draft?.assignments?.[this.slotId];
+    
+    this.drawSlotBase(g);
+    if(assigned) this.drawAssignedEmployee(g, assigned);
     // context menu button (simple square on right side) 
     this.renderContextBox(g);
 
-    g.pop();
-
+    if(this.highlight) this.drawPulseEffect(g);
+    
     // reset highlight (important)
     this.highlight = false;
+    g.pop();
+
   }
 
 }
