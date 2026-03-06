@@ -37,7 +37,6 @@ export class ContextMenuController {
   open(payload) {
 
     this.payload = payload;
-    console.log("Opening context menu with payload:", payload);
 
     const {x, y, type, ref} = payload;
     
@@ -81,38 +80,84 @@ export class ContextMenuController {
     this.emitCommand(action, null); 
   }
 
-  emitCommand(actionType, payload) {
+  emitCommand(action, payload) {
 
+    const elementType = this.target.type;
     const element = this.target.ref; 
 
-    if(element.employee) {
-        console.log("Emitting command:", actionType," from target: ", 
-        element.employee.name, " with payload:", payload);
-    
-      if(actionType.id === "renameEmployee") 
-        this.operator.rename(element.employee.id, payload);
+    switch(elementType) {
+
+      case "EMPLOYEE":
+        
+        switch(action.id) {
+          case "renameEmployee":
+            this.operator.renameEmployee(element.employee.id, payload);
+            break;
+
+          case "removeEmployee":
+            this.operator.removeEmployee(element.employee.id, payload);
+            break;
+        }
+        this.close();
+        break;
+
+      case "ASSIGNMENT":
+        console.log(element);
+        switch(action.id) {
+          case "toggleLock":
+            this.operator.toggleLock(element.slotId);
+            break;
+          
+          case "removeAssignment":
+            this.operator.removeAssignment(element.slotId);
+            break;
+
+        }
+        this.close();
+        break;
+      
+      case "SLOT":
+        console.log(element);
+        switch(action.id) {
+          
+          case "toggleLock":
+            this.operator.toggleLock(element.slotId);
+            break;
+
+        }
+        this.close();
+        break;
+      
+      case "SHIFT":
+        console.log(element);
+        switch(action.id) {
+          
+          case "changeSlotCount":
+            const slotCount = Number(payload);
+            this.operator.changeSlotCount(element, slotCount);
+            break;
+          
+          case "deleteShift":
+            this.operator.deleteShift(element);
+            break;
+
+        }
+        this.close();
+        break;
+      
+
+        
     }
+    
     
     
   }
 
   submitInput() {
     if(!this.pendingAction) return;
-    console.log(this.inputValue);
     if(Number(this.inputValue)) {const value = Number(this.inputValue);}
 
     this.emitCommand( this.pendingAction, this.inputValue);
-
-    // TODO ------
-    //
-    //this.operator.handleCommand({
-    //  type: action.type,
-    //  target: this.target,
-    //  payload
-    //});
-    // ------------
-
-    this.close();
 
   }
 
@@ -220,7 +265,7 @@ export class ContextMenuController {
 
   renderAction(g, action, index) {
     g.push();
-    const pad = 2;
+    const pad = 0;
       g.stroke("#000000ff"); g.strokeWeight(1); // #fba700ff #555555ff
       g.fill(this.highlighted === index ? "#fba700" : "rgba(85, 85, 85, 0.5)");
       g.rect(this.x + pad, this.y + index * 28 + pad, this.w - 2 * pad, this.itemH - 2 * pad, 4);
@@ -269,6 +314,7 @@ export class ContextMenuController {
       
       // Captured Input 
       const KB = R.input.keyboard;
+      if(KB.pressed && KB.key === "Backspace") this.inputValue = this.inputValue.slice(0, -1);
       if(KB.justPressed) {
         if(KB.key === "Enter") { 
           this.submitInput();

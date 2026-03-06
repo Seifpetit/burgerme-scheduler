@@ -5,6 +5,7 @@ export class EmployeeTray {
   constructor(employees, requestContextMenu) {
 
     this.employees = employees || [];
+    this.employeeCount = 0;
     this.requestContextMenu = requestContextMenu;
     // geometry
     this.x = 0;
@@ -157,12 +158,7 @@ export class EmployeeTray {
     }
   }
 
-  // ─────────────────────────────
-  // UPDATE
-  // ─────────────────────────────
-
-  update(mouse) {
-
+  handleScrolling(mouse) {
     // smooth interpolation
     
     this.clampScroll();
@@ -190,6 +186,24 @@ export class EmployeeTray {
     for (const sticker of this.stickers) {
       sticker.update(mouse);
     }
+  }
+
+  // ─────────────────────────────
+  // UPDATE
+  // ─────────────────────────────
+
+  update(mouse) {
+
+    const employees = R.appState.employees;
+
+    if(employees.length !== this.employees.length) {
+      this.employees = employees;
+      this.buildStickers();
+    }
+
+    for(const sticker of this.stickers) sticker.update(mouse);
+    this.handleScrolling(mouse);
+    
   }
 
   // ─────────────────────────────

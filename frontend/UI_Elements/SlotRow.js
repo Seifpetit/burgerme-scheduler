@@ -58,6 +58,10 @@ export class SlotRow {
     return R.appState.draft?.assignments?.[this.slotId];
   }
 
+  checkLock(){
+    return R.appState.locks?.[this.slotId];
+  }
+
   getCenter() {
     return {
       x: this.x + this.w / 2,
@@ -121,13 +125,20 @@ export class SlotRow {
     g.pop();
   }
 
+  drawLock(g) {
+    g.stroke("#e2621d"); 
+    g.strokeWeight(3);
+  }
+
   drawSlotBase(g) {
     g.fill(this.highlight ? "#58e6fc3b":"#333333");
+    if(this.checkLock()) this.drawLock(g);
     g.rect(this.x, this.y, this.w, this.h, 6);
   }
 
   drawAssignedEmployee(g, assigned) {
     g.fill(this.highlight ? "#6a32a67a" : "#92ba00");
+    if(this.checkLock()) this.drawLock(g);
       g.rect(this.x, this.y, this.w, this.h, 6);
 
       const emp = R.appState.employees.find(e => e.id === assigned);

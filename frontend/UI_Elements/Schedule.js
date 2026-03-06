@@ -179,9 +179,15 @@ export class Schedule {
       this.grid.days.forEach(day => {
         day.shifts.forEach(shift => {
           if (shift.contextBoxHitTest(mouse.x, mouse.y)) {
+            let spawnX = shift.contextBox.x;
+            let spawnY = shift.contextBox.y;
+
+            if(shift.contextBox.x + this.contextMenu.w > this.x + this.w) 
+              spawnX = shift.contextBox.x + shift.contextBox.w - this.contextMenu.w;
+
             this.requestContextMenu({
-              x: shift.contextBox.x,
-              y: shift.contextBox.y,
+              x: spawnX,
+              y: spawnY,
               type: "SHIFT",
               ref: shift,
             });
@@ -191,9 +197,15 @@ export class Schedule {
 
               const requestType = slot.checkAssignemnt() ? "ASSIGNMENT" : "SLOT";
               console.log("Requesting context menu with type:", requestType, "for slot:", slot.slotId);
+
+              let spawnX = slot.contextBox.x;
+              let spawnY = slot.contextBox.y;
+
+              if(shift.contextBox.x + this.contextMenu.w > this.x + this.w) 
+                spawnX = shift.contextBox.x + shift.contextBox.w - this.contextMenu.w;
               this.requestContextMenu({
-                x: slot.contextBox.x,
-                y: slot.contextBox.y,
+                x: spawnX,
+                y: spawnY,
                 type: requestType,
                 ref: slot,
               });

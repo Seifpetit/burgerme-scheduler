@@ -78,9 +78,7 @@ export class WeekGrid {
     }
     for (const day of this.days) {
       for (const shift of day.shifts) {
-        for (const slot of shift.slots) {
-          slot.update(mouse);
-        }
+        shift.update(mouse);
       }
     }
   }

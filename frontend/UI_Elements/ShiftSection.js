@@ -6,7 +6,7 @@ export class ShiftSection {
 
     this.dayIndex = dayIndex;     // 0–6
     this.type = type;             // "lunch" | "dinner"
-
+    this.key = `${this.dayIndex}_${this.type}`;
     // geometry
     this.x = 0;
     this.y = 0;
@@ -23,14 +23,15 @@ export class ShiftSection {
     this.slots = [];
 
     // V0: fixed capacity
-    this.capacity = 6;
+    const override = R.appState?.config?.slotCounts?.[this.key]
+
+    this.capacity = override ?? 3;
 
     this.buildSlots();
   }
 
   buildSlots() {
     this.slots = [];
-
     for (let i = 0; i < this.capacity; i++) {
       this.slots.push(
         new SlotRow(this.dayIndex, this.type, i)
@@ -79,6 +80,26 @@ export class ShiftSection {
 
 
   update(mouse) {
+  
+    const slotCounts = R.appState.config?.slotCounts;
+    if (slotCounts && slotCounts[this.key] !== undefined) {
+      const newCapacity = Number(slotCounts[this.key]);
+      if (!Number.isFinite(newCapacity)) return;
+
+      if (this.capacity !== newCapacity) {
+
+        console.log(
+          `capacity change detected for ${this.key}:`,
+          this.capacity,"→",newCapacity
+        );
+
+        this.capacity = newCapacity;
+        this.buildSlots();
+      }
+    }
+    
+      
+
     for (const slot of this.slots) {
       slot.update(mouse);
     }

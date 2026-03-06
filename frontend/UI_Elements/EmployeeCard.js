@@ -94,11 +94,9 @@ export class EmployeeCard {
     this.highlighted = false;
   }
 
-  onHover(mx, my) {console.log(this.contextBoxHitTest(mx, my));
+  onHover(mx, my) {
     if(!this.contextBoxHitTest(mx, my)) return;
-    console.log(this.contextBox.isHovered);
     this.contextBox.isHovered = true;
-    console.log(this.contextBox.isHovered);
   }
 
   // ─────────────────────────────

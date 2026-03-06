@@ -16,11 +16,6 @@ export const MENU_SCHEMAS = {
       input: "number"
     },
     {
-      id: "renameShift",
-      label: "Rename shift",
-      input: "text"
-    },
-    {
       id: "deleteShift",
       label: "Delete shift",
       input: null
@@ -29,37 +24,22 @@ export const MENU_SCHEMAS = {
 
   [MENU_TYPES.SLOT]: [
     {
-      id: "clearSlot",
-      label: "Clear slot",
+      id: "toggleLock",
+      label: "Lock / Unlock slot",
       input: null
     },
+  ],
+
+  [MENU_TYPES.ASSIGNMENT]: [
     {
       id: "toggleLock",
       label: "Lock / Unlock slot",
       input: null
     },
     {
-      id: "toggleUnavailable",
-      label: "Mark unavailable",
-      input: null
-    }
-  ],
-
-  [MENU_TYPES.ASSIGNMENT]: [
-    {
       id: "removeAssignment",
       label: "Remove assignment",
       input: null
-    },
-    {
-      id: "activateSwapMode",
-      label: "Swap with...",
-      input: null
-    },
-     {
-      id: "setConstraint",
-      label: "set constraint",
-      input: true
     },
     
   ],

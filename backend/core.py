@@ -37,20 +37,19 @@ def init_state() -> None:
         "employees": employees,
         "employees_by_id": employees_by_id,
         "demand": demand,
-        "assigned": assigned,
+        "assigned": assigned
     }
 
 
 def _payload(state: Dict[str, object]) -> Dict[str, object]:
-    """
-    Always return state + validation to UI.
-    Trigger: /state, /move, /generate
-    """
     report: ValidationReport = validate(state)
+
     return {
         "employees": state["employees"],
         "demand": state["demand"],
-        "assigned": state["assigned"],
+        "draft": {
+            "assignments": state["assigned"]
+        },
         "report": report,
     }
 

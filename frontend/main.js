@@ -43,7 +43,15 @@ new window.p5(p5 => {
   // ─────────────────────────────────────────
   async function initState() {
     appState = await loadState(); console.log(appState);
+    if (!appState) return;              // stop if load failed
+
     R.appState = appState;
+
+    // optional safety defaults (won't hurt even if backend doesn't send them)
+    R.appState.config ??= {};
+    R.appState.config.slotCounts ??= {};
+    R.appState.draft ??= {};
+    R.appState.draft.assignments ??= {};
     initUI();
     initGeometry(p5);
     p5.loop();
