@@ -66,6 +66,7 @@ export class GenerateButton {
 
     g.translate(this.x + this.w / 2, this.y + this.h / 2);
     g.scale(this.scale);
+    
 
     // outer rect (border)  #fba700ff 
     g.fill("#333");

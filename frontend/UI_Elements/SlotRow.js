@@ -59,7 +59,7 @@ export class SlotRow {
   }
 
   checkLock(){
-    return R.appState.locks?.[this.slotId];
+    return R.appState.slotLocks?.[this.slotId];
   }
 
   getCenter() {

@@ -1,6 +1,6 @@
 import { R } from "../core/runtime.js";
 import { MENU_SCHEMAS } from "./menuSchema.js";
-import { commands } from "../core/commands.js";
+
 // ───────────────────────────────────────────────────────────────────────────
 // CONTEXT MENU CONTROLLER
 // ───────────────────────────────────────────────────────────────────────────  
@@ -136,7 +136,11 @@ export class ContextMenuController {
             const slotCount = Number(payload);
             this.operator.changeSlotCount(element, slotCount);
             break;
-          
+
+          case "lockShift":
+            this.operator.lockShift(element);
+            break;
+
           case "deleteShift":
             this.operator.deleteShift(element);
             break;

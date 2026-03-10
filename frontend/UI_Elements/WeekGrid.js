@@ -79,6 +79,7 @@ export class WeekGrid {
     for (const day of this.days) {
       for (const shift of day.shifts) {
         shift.update(mouse);
+
       }
     }
   }

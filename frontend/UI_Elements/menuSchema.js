@@ -16,6 +16,11 @@ export const MENU_SCHEMAS = {
       input: "number"
     },
     {
+      id: "lockShift",
+      label: "Lock Shift",
+      input: false,
+    },
+    {
       id: "deleteShift",
       label: "Delete shift",
       input: null

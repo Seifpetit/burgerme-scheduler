@@ -105,16 +105,24 @@ export class ShiftSection {
     }
   }
 
+  checkLock(){
+    return R.appState.shiftLocks?.[this.key];
+  }
+
   render(g) {
 
     g.push();
+    
 
     // shift container background
-    g.fill("#1f1f1f");  g.stroke("#92ba00"); g.strokeWeight(1);
+    g.fill("#1f1f1f");  
+    g.stroke(this.checkLock() ? "#e2621d" : "#92ba00"); 
+    g.strokeWeight(this.checkLock() ? 3 : 0.5);
+   
     g.rect(this.x, this.y, this.w, this.h, 8);
     g.noStroke();
     // shift label
-    g.fill("#ffffff");
+    g.fill(this.checkLock() ? "#e2621d" : "#fff");
     g.textAlign(g.LEFT, g.CENTER);
     const font = R.assets.fonts["Medium"];
     g.textFont(font);
