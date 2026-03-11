@@ -35,20 +35,11 @@ def load_sample_data() -> Dict[str, object]:
     """
     employees: List[Employee] = [
         {"id": "e01", "name": "Seif", "roles": ["driver"]},
-        {"id": "e02", "name": "Ali", "roles": ["driver"]},
-        {"id": "e03", "name": "Omar", "roles": ["driver"]},
-        {"id": "e04", "name": "Jonas", "roles": ["driver"]},
-        {"id": "e05", "name": "Mert", "roles": ["driver"]},
-        {"id": "e06", "name": "Lina", "roles": ["kitchen"]},
-        {"id": "e07", "name": "Sara", "roles": ["kitchen"]},
-        {"id": "e08", "name": "Nour", "roles": ["kitchen"]},
-        {"id": "e09", "name": "Ben", "roles": ["kitchen"]},
-        {"id": "e10", "name": "Hassan", "roles": ["driver"]},
-        {"id": "e11", "name": "Yara", "roles": ["kitchen"]},
-        {"id": "e12", "name": "Tim", "roles": ["driver"]},
-        {"id": "e13", "name": "Noah", "roles": ["driver"]},
-        {"id": "e14", "name": "Mila", "roles": ["kitchen"]},
-        {"id": "e15", "name": "Ziad", "roles": ["driver"]},
+        {"id": "e02", "name": "Omar", "roles": ["driver"]},
+        {"id": "e03", "name": "Jonas", "roles": ["driver"]},
+        {"id": "e04", "name": "Lina", "roles": ["kitchen"]},
+        {"id": "e05", "name": "Sara", "roles": ["kitchen"]},
+        
     ]
 
     # V0 demand: keep constant for simplicity.

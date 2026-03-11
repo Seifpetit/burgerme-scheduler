@@ -1,4 +1,4 @@
-import { R } from "../core/runtime.js";
+import { R } from "../../core/runtime.js";
 
 export class GenerateButton {
   constructor(command) { 
