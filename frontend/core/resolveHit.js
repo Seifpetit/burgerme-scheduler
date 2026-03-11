@@ -38,6 +38,11 @@ function _findHit(gx, gy) {
     return { node: UI_ELEMENTS.button, type: "button" };
   }
 
+  // Export button (top-right)
+  if (UI_ELEMENTS.exportButton?.hitTest(gx, gy)) {
+    return { node: UI_ELEMENTS.exportButton, type: "exportButton" };
+  }
+
   // Test button (dev)
   if (UI_ELEMENTS.testButton?.hitTest(gx, gy)) {
     return { node: UI_ELEMENTS.testButton, type: "testButton" };

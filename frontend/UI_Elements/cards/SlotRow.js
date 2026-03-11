@@ -155,17 +155,28 @@ export class SlotRow extends UINode {
 
     if (locked) { g.stroke("#e2621d"); g.strokeWeight(3); }
 
+    // Is this slot restricted for the employee currently being dragged?
+    const isDragRestricted = drag.active && drag.kind === "card" && drag.card &&
+      (R.appState.restrictions?.[drag.card.employee.id]?.includes(this.slotId) ?? false);
+
     // Pick fill
     let fillColor;
     if (rm.active) {
       // Restriction selection mode — show selected/hover state, mute everything else
-      const isSelected  = rm.selected?.has(this.slotId);
-      const isRestrHov  = isHovered;
+      const isSelected = rm.selected?.has(this.slotId);
       if (isSelected)      fillColor = "#fba70099";
-      else if (isRestrHov) fillColor = "#fba70044";
+      else if (isHovered)  fillColor = "#fba70044";
       else                 fillColor = "#22222299";
     } else if (isDragSource) {
       fillColor = "#33333380";
+    } else if (isDragRestricted && isDragTarget) {
+      // Nearest target AND restricted — verdict color (will be "restricted") takes over
+      const verdict = drag.verdict ?? "neutral";
+      const base    = VERDICT_COLORS[verdict] ?? VERDICT_COLORS.neutral;
+      fillColor = base + "90";
+    } else if (isDragRestricted) {
+      // Restricted for dragged employee — amber tint across the whole slot
+      fillColor = isHovered ? "#fba70077" : "#fba70033";
     } else if (isDragTarget) {
       const verdict = drag.verdict ?? "neutral";
       const base    = VERDICT_COLORS[verdict] ?? VERDICT_COLORS.neutral;
@@ -178,6 +189,20 @@ export class SlotRow extends UINode {
     g.fill(fillColor);
     g.rect(this.x, this.y, this.w, this.h, 6);
     g.noStroke();
+
+    // Dashed amber border on restricted slots during card drag
+    if (isDragRestricted && !isDragTarget) {
+      g.push();
+      g.drawingContext.save();
+      g.drawingContext.setLineDash([4, 3]);
+      g.drawingContext.lineWidth   = 1.5;
+      g.drawingContext.strokeStyle = "#fba700aa";
+      g.drawingContext.beginPath();
+      g.drawingContext.roundRect(this.x + 1, this.y + 1, this.w - 2, this.h - 2, 6);
+      g.drawingContext.stroke();
+      g.drawingContext.restore();
+      g.pop();
+    }
 
     if (assigned && !this.isRenaming && !isDragSource) {
       const emp = R.appState.employees.find(e => e.id === assigned);

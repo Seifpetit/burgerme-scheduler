@@ -119,6 +119,10 @@ function _updateDragTilt(mouse) {
 // HOVER
 // ─────────────────────────────────────────────────────────────────────────────
 function _onHover({ type, node }, mouse) {
+  if (type === "exportButton") {
+    node.updateHover(mouse);
+  }
+
   const tray = UI_ELEMENTS.schedule?.tray;
 
   if (type === "trayCard" || type === "trayCardName") {
@@ -173,10 +177,16 @@ function _onClick(hovered, mouse) {
   if (!hovered) {
     schedule?.contextMenu?.close();
     schedule?.inlineInput?.cancel();
+    UI_ELEMENTS.exportButton?.closeMenu();
     return;
   }
 
   const { type, node } = hovered;
+
+  if (type === "exportButton") {
+    node.onClick(mouse.x, mouse.y);
+    return;
+  }
 
   if (type === "contextMenu") {
     node.onClick(mouse.x, mouse.y);
@@ -184,6 +194,7 @@ function _onClick(hovered, mouse) {
   }
 
   schedule?.contextMenu?.close();
+  UI_ELEMENTS.exportButton?.closeMenu();
 
   if (type === "button") {
     commands.generate();

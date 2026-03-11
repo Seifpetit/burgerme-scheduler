@@ -7,25 +7,26 @@ import { renderFrame }      from "./render.js";
 import { reactionFeedback } from "./reactionFeedback.js";
 import { Schedule }         from "../UI_Elements/layout/Schedule.js";
 import { GenerateButton }         from "../UI_Elements/cards/Button.js";
-import { TestTransitionButton }   from "../UI_Elements/cards/TestTransitionButton.js";
+import { ExportButton }           from "../UI_Elements/cards/ExportButton.js";
+// import { TestTransitionButton } from "../UI_Elements/cards/TestTransitionButton.js";  // keep for future dev use
 import { commands }         from "./commands.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UI_ELEMENTS  — registry used by resolveHit, routeInput, renderFrame
 // ─────────────────────────────────────────────────────────────────────────────
 export const UI_ELEMENTS = {
-  schedule:   null,
-  button:     null,
-  testButton: null,   // dev only — remove in production
+  schedule:     null,
+  button:       null,
+  exportButton: null,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // initUI  — called once from boot after appState is ready
 // ─────────────────────────────────────────────────────────────────────────────
 export function initUI() {
-  UI_ELEMENTS.schedule   = new Schedule(R.appState, commands);
-  UI_ELEMENTS.button     = new GenerateButton(commands.generate.bind(commands));
-  UI_ELEMENTS.testButton = new TestTransitionButton();
+  UI_ELEMENTS.schedule     = new Schedule(R.appState, commands);
+  UI_ELEMENTS.button       = new GenerateButton(commands.generate.bind(commands));
+  UI_ELEMENTS.exportButton = new ExportButton();
   _initGeometry();
 }
 
@@ -105,7 +106,7 @@ export function updateFrame(p5) {
 
   UI_ELEMENTS.schedule?.update(p5, R.input.mouse);
   UI_ELEMENTS.button?.update(p5, R.input.mouse);
-  UI_ELEMENTS.testButton?.update(p5, R.input.mouse);
+  UI_ELEMENTS.exportButton?.update(p5, R.input.mouse);
 
   routeInput();
   reactionFeedback();
